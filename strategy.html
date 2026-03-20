@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>OI Pulse — Strategy Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#07090d;--bg2:#0f1218;--bg3:#161b24;--bg4:#1e2433;
+  --bdr:rgba(255,255,255,.06);--bdr2:rgba(255,255,255,.12);
+  --t:#dde1ee;--t2:#8892a4;--t3:#4d5568;
+  --g:#00d68f;--g2:rgba(0,214,143,.13);
+  --r:#ff4f6a;--r2:rgba(255,79,106,.14);
+  --a:#f5a623;--a2:rgba(245,166,35,.13);
+  --b:#4d9fff;--b2:rgba(77,159,255,.13);
+  --mono:'Space Mono',monospace;
+  --sans:'DM Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t);font-family:var(--sans);font-size:14px;min-height:100vh}
+
+/* TOPBAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 32px;border-bottom:1px solid var(--bdr);
+  background:rgba(7,9,13,.92);backdrop-filter:blur(8px);
+  position:sticky;top:0;z-index:100
+}
+.logo{font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:.05em;display:flex;align-items:center;gap:10px}
+.logo em{color:var(--g);font-style:normal}
+.logo-sep{color:var(--t3);font-weight:400}
+.logo-page{color:var(--t2);font-size:13px}
+.back-btn{
+  font-family:var(--mono);font-size:11px;padding:6px 14px;
+  border:1px solid var(--bdr2);border-radius:10px;
+  background:transparent;color:var(--t2);cursor:pointer;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  transition:all .15s
+}
+.back-btn:hover{background:var(--bg3);color:var(--t);border-color:var(--g)}
+
+/* HERO */
+.hero{
+  padding:56px 32px 40px;max-width:1100px;margin:0 auto;
+  border-bottom:1px solid var(--bdr)
+}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+  color:var(--g);text-transform:uppercase;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px
+}
+.hero-eyebrow::before{content:'';width:24px;height:1px;background:var(--g)}
+.hero h1{
+  font-family:var(--mono);font-size:clamp(26px,4vw,40px);
+  font-weight:700;line-height:1.2;margin-bottom:16px;
+  color:var(--t)
+}
+.hero h1 em{color:var(--g);font-style:normal}
+.hero-desc{font-size:15px;color:var(--t2);max-width:640px;line-height:1.75;margin-bottom:24px}
+.meta-row{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.meta-chip{
+  font-size:11px;font-family:var(--mono);padding:4px 12px;
+  border-radius:20px;background:var(--bg3);color:var(--t3);
+  border:1px solid var(--bdr)
+}
+.meta-chip.live{background:var(--g2);color:var(--g);border-color:rgba(0,214,143,.25)}
+
+/* TOC */
+.toc{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:12px;padding:20px 24px;margin:32px auto;
+  max-width:1100px
+}
+.toc h3{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.toc-item{
+  font-size:13px;color:var(--t2);padding:7px 10px;border-radius:8px;
+  text-decoration:none;display:flex;align-items:center;gap:8px;
+  transition:all .12s;border:1px solid transparent
+}
+.toc-item:hover{background:var(--bg3);color:var(--t);border-color:var(--bdr)}
+.toc-num{font-family:var(--mono);font-size:10px;color:var(--t3)}
+
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:0 32px 60px}
+
+/* SECTION */
+.section{margin-bottom:60px;padding-top:20px}
+.sec-header{
+  display:flex;align-items:flex-start;gap:16px;margin-bottom:28px;
+  padding-bottom:16px;border-bottom:1px solid var(--bdr)
+}
+.sec-num{
+  font-family:var(--mono);font-size:11px;color:var(--g);
+  background:var(--g2);border:1px solid rgba(0,214,143,.25);
+  border-radius:6px;padding:4px 10px;flex-shrink:0;margin-top:4px
+}
+.sec-title{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--t)}
+.sec-sub{font-size:13px;color:var(--t3);margin-top:4px;line-height:1.6}
+
+/* SIGNAL CARDS */
+.signal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:16px}
+.signal-card{
+  background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;
+  overflow:hidden;transition:border-color .2s
+}
+.signal-card:hover{border-color:var(--bdr2)}
+.sig-head{
+  display:flex;align-items:center;gap:12px;
+  padding:16px 20px;border-bottom:1px solid var(--bdr)
+}
+.sig-icon{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;flex-shrink:0
+}
+.sig-label{font-family:var(--mono);font-size:14px;font-weight:700}
+.sig-cond{font-size:11px;font-family:var(--mono);color:var(--t3);margin-top:2px}
+.sig-body{padding:16px 20px}
+.sig-row{margin-bottom:12px}
+.sig-row:last-child{margin-bottom:0}
+.sig-row-lbl{font-size:10px;font-family:var(--mono);color:var(--t3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.sig-row-val{font-size:13px;color:var(--t2);line-height:1.6}
+.sig-row-val.what{color:var(--t)}
+.floor-pill{
+  display:inline-block;font-size:11px;font-family:var(--mono);
+  padding:3px 10px;border-radius:20px;margin-top:8px
+}
+
+/* SCORING TABLE */
+.factor-list{display:flex;flex-direction:column;gap:14px}
+.factor-card{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:12px;overflow:hidden
+}
+.factor-card.inactive{opacity:.45}
+.factor-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;cursor:pointer;transition:background .1s
+}
+.factor-head:hover{background:rgba(255,255,255,.02)}
+.fh-left{display:flex;align-items:center;gap:12px}
+.fh-name{font-family:var(--mono);font-size:13px;font-weight:700}
+.fh-pts{
+  font-family:var(--mono);font-size:12px;padding:3px 10px;
+  border-radius:20px;background:var(--b2);color:var(--b);
+  border:1px solid rgba(77,159,255,.25);flex-shrink:0
+}
+.fh-weight{font-size:11px;color:var(--t3);font-family:var(--mono)}
+.active-tag{
+  font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:4px
+}
+.active-tag.on {background:var(--g2);color:var(--g);border:1px solid rgba(0,214,143,.2)}
+.active-tag.off{background:var(--r2);color:var(--r);border:1px solid rgba(255,79,106,.2)}
+.chevron{color:var(--t3);font-size:11px;transition:transform .2s;font-family:var(--mono)}
+.factor-body{
+  display:none;padding:16px 20px;border-top:1px solid var(--bdr)
+}
+.factor-body.open{display:block}
+.fb-formula{
+  font-family:var(--mono);font-size:12px;color:var(--b);
+  background:var(--bg3);padding:8px 12px;border-radius:8px;
+  margin-bottom:14px;border:1px solid var(--bdr2)
+}
+.fb-desc{font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px}
+.thresh-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+.thresh-table th{
+  padding:6px 12px;text-align:left;font-family:var(--mono);font-size:10px;
+  color:var(--t3);letter-spacing:.07em;border-bottom:1px solid var(--bdr)
+}
+.thresh-table td{padding:7px 12px;border-bottom:1px solid var(--bdr)}
+.thresh-table tr:last-child td{border-bottom:none}
+.fb-tip{
+  font-size:12px;color:var(--a);background:var(--a2);
+  border:1px solid rgba(245,166,35,.2);border-radius:8px;
+  padding:10px 14px;display:flex;gap:8px;align-items:flex-start
+}
+.fb-tip::before{content:'💡';flex-shrink:0}
+.fb-added{font-size:10px;font-family:var(--mono);color:var(--t3);margin-top:10px}
+
+/* FAKEOUT RULES */
+.fakeout-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(460px,1fr));gap:14px}
+.fakeout-card{
+  background:var(--bg2);border:1px solid rgba(255,79,106,.15);
+  border-radius:12px;padding:18px 20px
+}
+.fakeout-card.inactive{opacity:.4;border-color:var(--bdr)}
+.fk-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.fk-icon{font-size:16px}
+.fk-name{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--r)}
+.fk-trigger{
+  font-family:var(--mono);font-size:11px;color:var(--t3);
+  background:var(--bg3);padding:5px 10px;border-radius:6px;
+  margin-bottom:10px;display:inline-block
+}
+.fk-warn{
+  font-size:12px;color:var(--a);background:var(--a2);
+  border-radius:6px;padding:8px 12px;margin-bottom:10px;
+  border:1px solid rgba(245,166,35,.2)
+}
+.fk-explain{font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:8px}
+.fk-verify{
+  font-size:12px;color:var(--b);background:var(--b2);
+  border-radius:6px;padding:8px 12px;
+  border:1px solid rgba(77,159,255,.2)
+}
+.fk-verify::before{content:'✓ HOW TO VERIFY: ';font-family:var(--mono);font-size:10px}
+.penalty-note{
+  background:rgba(255,79,106,.08);border:1px solid rgba(255,79,106,.2);
+  border-radius:10px;padding:14px 18px;margin-bottom:20px;
+  font-size:13px;color:var(--r);display:flex;gap:10px;align-items:flex-start
+}
+
+/* CONVICTION TABLE */
+.conviction-grid{display:flex;flex-direction:column;gap:12px}
+.conv-card{
+  display:grid;grid-template-columns:180px 100px 1fr;
+  gap:0;background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:10px;overflow:hidden;align-items:stretch
+}
+.conv-label{
+  padding:16px 18px;display:flex;flex-direction:column;
+  justify-content:center;border-right:1px solid var(--bdr)
+}
+.conv-label-text{font-family:var(--mono);font-size:12px;font-weight:700}
+.conv-range{font-size:11px;font-family:var(--mono);color:var(--t3);margin-top:3px}
+.conv-size{
+  padding:16px 14px;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  border-right:1px solid var(--bdr);text-align:center
+}
+.conv-size-num{font-family:var(--mono);font-size:20px;font-weight:700}
+.conv-size-lbl{font-size:10px;font-family:var(--mono);color:var(--t3);margin-top:2px}
+.conv-detail{padding:14px 18px}
+.conv-action{font-size:13px;font-weight:500;color:var(--t);margin-bottom:4px}
+.conv-desc{font-size:12px;color:var(--t3);line-height:1.6}
+
+/* ENTRY WINDOWS */
+.window-list{display:flex;flex-direction:column;gap:10px}
+.window-row{
+  display:grid;grid-template-columns:140px 110px 1fr;
+  gap:0;background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:10px;overflow:hidden;align-items:stretch
+}
+.wr-time{
+  padding:14px 16px;font-family:var(--mono);font-size:12px;
+  font-weight:700;display:flex;align-items:center;
+  border-right:1px solid var(--bdr)
+}
+.wr-label{
+  padding:14px 14px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;font-weight:700;text-align:center;
+  border-right:1px solid var(--bdr)
+}
+.wr-reason{padding:14px 16px;font-size:13px;color:var(--t2);line-height:1.6;display:flex;align-items:center}
+
+/* SL RULES */
+.sl-list{display:flex;flex-direction:column;gap:10px}
+.sl-row{
+  background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:16px 20px
+}
+.sl-rule{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--t);margin-bottom:6px;display:flex;gap:8px;align-items:flex-start}
+.sl-rule::before{content:'→';color:var(--g);flex-shrink:0}
+.sl-detail{font-size:13px;color:var(--t2);line-height:1.7}
+
+/* ATR TABLE */
+.atr-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px
+}
+.atr-card{
+  background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px
+}
+.atr-sec{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--t);margin-bottom:4px}
+.atr-val{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--b)}
+.atr-note{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* SCORE FORMULA BOX */
+.formula-box{
+  background:var(--bg3);border:1px solid var(--bdr2);border-radius:12px;
+  padding:20px 24px;font-family:var(--mono);margin-bottom:20px
+}
+.formula-title{font-size:11px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.formula-eq{font-size:14px;color:var(--g);line-height:2}
+.formula-eq span{color:var(--t2)}
+.formula-note{font-size:12px;color:var(--t3);margin-top:10px;line-height:1.6}
+
+/* CHANGELOG SECTION */
+.changelog{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:12px;padding:20px 24px;margin-top:20px
+}
+.cl-title{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.1em;margin-bottom:14px}
+.cl-item{
+  display:flex;gap:14px;padding:10px 0;
+  border-bottom:1px solid var(--bdr);align-items:flex-start
+}
+.cl-item:last-child{border-bottom:none}
+.cl-date{font-family:var(--mono);font-size:11px;color:var(--t3);white-space:nowrap;min-width:90px}
+.cl-text{font-size:13px;color:var(--t2)}
+.cl-text strong{color:var(--t)}
+
+/* UTIL */
+.tag{
+  display:inline-block;font-size:10px;font-family:var(--mono);
+  padding:2px 8px;border-radius:4px;margin-left:6px
+}
+.empty{text-align:center;padding:40px;color:var(--t3);font-family:var(--mono)}
+
+@media(max-width:768px){
+  .topbar,.hero,.main{padding-left:16px;padding-right:16px}
+  .signal-grid,.fakeout-list{grid-template-columns:1fr}
+  .conv-card{grid-template-columns:1fr}
+  .window-row{grid-template-columns:1fr}
+  .toc{margin-left:16px;margin-right:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    OI<em>Pulse</em>
+    <span class="logo-sep">/</span>
+    <span class="logo-page">Strategy Guide</span>
+  </div>
+  <a href="index.html" class="back-btn">← Back to Tracker</a>
+</div>
+
+<div id="page-content">
+  <div class="empty">Loading strategy data...</div>
+</div>
+
+<!-- Load strategies config -->
+<script src="strategies.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', buildPage);
+
+function buildPage() {
+  const S = window.OIPULSE_STRATEGIES;
+  if (!S) {
+    document.getElementById('page-content').innerHTML =
+      '<div class="empty">strategies.js not found. Place it in the same folder as this page.</div>';
+    return;
+  }
+
+  const totalMaxPts = S.scoringFactors.filter(f=>f.active).reduce((a,f)=>a+f.maxPoints,0);
+  const activeFactors = S.scoringFactors.filter(f=>f.active).length;
+  const activeFakeouts = S.antiFakeoutRules.filter(r=>r.active).length;
+
+  // Build changelog from addedOn dates
+  const allDated = [
+    ...S.scoringFactors.map(f=>({date:f.addedOn,type:'Factor',name:f.name,active:f.active})),
+    ...S.antiFakeoutRules.map(r=>({date:r.addedOn,type:'Anti-Fakeout',name:r.name,active:r.active})),
+  ].filter(x=>x.date).sort((a,b)=>b.date.localeCompare(a.date));
+
+  document.getElementById('page-content').innerHTML = `
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-eyebrow">Strategy Documentation</div>
+      <h1>How <em>OI Pulse</em> Analyses<br>the Market</h1>
+      <p class="hero-desc">
+        Every signal, score, and recommendation on the tracker comes from the rules documented here.
+        This page auto-updates whenever strategies are added or removed — it always reflects the live engine.
+      </p>
+      <div class="meta-row">
+        <span class="meta-chip live">v${S.meta.version}</span>
+        <span class="meta-chip">Updated ${S.meta.updatedAt}</span>
+        <span class="meta-chip">${activeFactors} active scoring factors</span>
+        <span class="meta-chip">${activeFakeouts} anti-fakeout rules</span>
+        <span class="meta-chip">Max score: ${S.meta.baseSuccessFloor + totalMaxPts}% (base ${S.meta.baseSuccessFloor} + factors ${totalMaxPts})</span>
+      </div>
+    </div>
+
+    <!-- TOC -->
+    <div class="toc">
+      <h3>Contents</h3>
+      <div class="toc-grid">
+        <a href="#signals"     class="toc-item"><span class="toc-num">01</span> Signal Types</a>
+        <a href="#scoring"     class="toc-item"><span class="toc-num">02</span> Scoring Factors</a>
+        <a href="#fakeout"     class="toc-item"><span class="toc-num">03</span> Anti-Fakeout Rules</a>
+        <a href="#conviction"  class="toc-item"><span class="toc-num">04</span> Conviction Levels & Sizing</a>
+        <a href="#entry-exit"  class="toc-item"><span class="toc-num">05</span> Entry & Exit Rules</a>
+        <a href="#price-levels"class="toc-item"><span class="toc-num">06</span> Price Level Calculation</a>
+        <a href="#changelog"   class="toc-item"><span class="toc-num">07</span> Changelog</a>
+      </div>
+    </div>
+
+    <div class="main">
+
+      <!-- ── SECTION 1: SIGNALS ── -->
+      <div class="section" id="signals">
+        <div class="sec-header">
+          <span class="sec-num">01</span>
+          <div>
+            <div class="sec-title">Signal Types</div>
+            <div class="sec-sub">Four signals derived from the combination of price direction and OI change direction.</div>
+          </div>
+        </div>
+        <div class="signal-grid">
+          ${S.signals.map(sig => `
+            <div class="signal-card">
+              <div class="sig-head" style="border-left:3px solid ${sig.color}">
+                <div class="sig-icon" style="background:${sig.color}22;color:${sig.color}">${sig.icon}</div>
+                <div>
+                  <div class="sig-label" style="color:${sig.color}">${sig.label}</div>
+                  <div class="sig-cond">${sig.condition}</div>
+                </div>
+              </div>
+              <div class="sig-body">
+                <div class="sig-row">
+                  <div class="sig-row-lbl">What it means</div>
+                  <div class="sig-row-val">${sig.meaning}</div>
+                </div>
+                <div class="sig-row">
+                  <div class="sig-row-lbl">What to do</div>
+                  <div class="sig-row-val what">${sig.whatToDo}</div>
+                </div>
+                <div class="sig-row">
+                  <div class="sig-row-lbl">Risk</div>
+                  <div class="sig-row-val" style="color:#f5a623">${sig.risk}</div>
+                </div>
+                <span class="floor-pill" style="background:${sig.color}18;color:${sig.color};border:1px solid ${sig.color}33">
+                  Min success floor: ${sig.successFloor}%
+                </span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- ── SECTION 2: SCORING ── -->
+      <div class="section" id="scoring">
+        <div class="sec-header">
+          <span class="sec-num">02</span>
+          <div>
+            <div class="sec-title">Success % Scoring Factors</div>
+            <div class="sec-sub">${S.scoringFactors.length} factors, ${activeFactors} currently active. Click any factor to expand details.</div>
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <div class="formula-title">Score Formula</div>
+          <div class="formula-eq">
+            Success % = <span>${S.meta.baseSuccessFloor} (base)</span>
+            ${S.scoringFactors.filter(f=>f.active).map(f=>`<span> + up to ${f.maxPoints} (${f.name})</span>`).join('')}
+          </div>
+          <div class="formula-note">
+            If flagged by anti-fakeout rules: score × ${S.meta.fakeoutPenalty} (${Math.round((1-S.meta.fakeoutPenalty)*100)}% penalty)<br>
+            CAUTION and NEUTRAL signals are capped at 55% regardless of factor scores.<br>
+            Final range: ${S.meta.baseSuccessFloor}% floor → ${S.meta.maxSuccess}% ceiling.
+          </div>
+        </div>
+
+        <div class="factor-list">
+          ${S.scoringFactors.map((f,i) => `
+            <div class="factor-card ${f.active?'':'inactive'}" id="factor-${f.id}">
+              <div class="factor-head" onclick="toggleFactor('factor-body-${f.id}', 'chev-${f.id}')">
+                <div class="fh-left">
+                  <span class="fh-name">${f.name}</span>
+                  <span class="active-tag ${f.active?'on':'off'}">${f.active?'ACTIVE':'DISABLED'}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <span class="fh-weight" style="color:var(--t3)">Weight: ${f.weight}</span>
+                  <span class="fh-pts">max +${f.maxPoints} pts</span>
+                  <span class="chevron" id="chev-${f.id}">▼</span>
+                </div>
+              </div>
+              <div class="factor-body" id="factor-body-${f.id}">
+                <div class="fb-formula">Formula: ${f.formula}</div>
+                <div class="fb-desc">${f.howItWorks}</div>
+                <table class="thresh-table">
+                  <thead><tr><th>Condition</th><th>Score</th><th>Label</th></tr></thead>
+                  <tbody>
+                    ${f.thresholds.map(t=>`
+                      <tr>
+                        <td style="font-family:var(--mono);font-size:11px;color:var(--t2)">${t.condition}</td>
+                        <td style="font-family:var(--mono);font-size:12px;font-weight:700;color:${t.color}">${t.score}</td>
+                        <td><span style="color:${t.color};font-size:12px">${t.label}</span></td>
+                      </tr>`).join('')}
+                  </tbody>
+                </table>
+                <div class="fb-tip">${f.tip}</div>
+                <div class="fb-added">Added: ${f.addedOn}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- ── SECTION 3: ANTI-FAKEOUT ── -->
+      <div class="section" id="fakeout">
+        <div class="sec-header">
+          <span class="sec-num">03</span>
+          <div>
+            <div class="sec-title">Anti-Fakeout Rules</div>
+            <div class="sec-sub">${S.antiFakeoutRules.length} rules, ${activeFakeouts} active. Any trigger = signal flagged + score penalty.</div>
+          </div>
+        </div>
+
+        <div class="penalty-note">
+          ⚠ If any anti-fakeout rule is triggered, the signal is marked FLAGGED and the success score is multiplied by ${S.meta.fakeoutPenalty} (${Math.round((1-S.meta.fakeoutPenalty)*100)}% penalty). The signal is still shown but dimmed, with red warning badges. Never enter a flagged signal without reading the specific warning.
+        </div>
+
+        <div class="fakeout-list">
+          ${S.antiFakeoutRules.map(r => `
+            <div class="fakeout-card ${r.active?'':'inactive'}">
+              <div class="fk-head">
+                <span class="fk-icon">⚠</span>
+                <span class="fk-name">${r.name}</span>
+                <span class="active-tag ${r.active?'on':'off'}" style="margin-left:auto">${r.active?'ACTIVE':'OFF'}</span>
+              </div>
+              <div class="fk-trigger">Trigger: ${r.trigger}</div>
+              <div class="fk-warn">${r.warning}</div>
+              <div class="fk-explain">${r.explanation}</div>
+              <div class="fk-verify">${r.howToVerify}</div>
+              <div style="font-size:10px;font-family:var(--mono);color:var(--t3);margin-top:8px">Added: ${r.addedOn}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- ── SECTION 4: CONVICTION ── -->
+      <div class="section" id="conviction">
+        <div class="sec-header">
+          <span class="sec-num">04</span>
+          <div>
+            <div class="sec-title">Conviction Levels & Position Sizing</div>
+            <div class="sec-sub">How to translate a success % into a position size decision.</div>
+          </div>
+        </div>
+        <div class="conviction-grid">
+          ${S.convictionLevels.map(c => `
+            <div class="conv-card">
+              <div class="conv-label" style="border-left:3px solid ${c.color}">
+                <div class="conv-label-text" style="color:${c.color}">${c.label}</div>
+                <div class="conv-range">${c.range[0]}–${c.range[1]}% success</div>
+              </div>
+              <div class="conv-size">
+                <div class="conv-size-num" style="color:${c.color}">${c.positionSize}</div>
+                <div class="conv-size-lbl">position size</div>
+              </div>
+              <div class="conv-detail">
+                <div class="conv-action">${c.action}</div>
+                <div class="conv-desc">${c.description}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- ── SECTION 5: ENTRY & EXIT ── -->
+      <div class="section" id="entry-exit">
+        <div class="sec-header">
+          <span class="sec-num">05</span>
+          <div>
+            <div class="sec-title">Entry & Exit Rules</div>
+            <div class="sec-sub">Time-based windows, confirmation rules, and stop-loss discipline.</div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.08em;margin-bottom:12px">TRADING WINDOWS (IST)</div>
+        <div class="window-list" style="margin-bottom:32px">
+          ${S.entryExitRules.entryWindows.map(w => `
+            <div class="window-row">
+              <div class="wr-time">${w.time}</div>
+              <div class="wr-label" style="color:${w.color};background:${w.color}14">${w.label}</div>
+              <div class="wr-reason">${w.reason}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.08em;margin-bottom:12px">CANDLE CONFIRMATION RULES</div>
+        <div class="sl-list" style="margin-bottom:32px">
+          ${S.entryExitRules.confirmationRules.map(r=>`
+            <div class="sl-row">
+              <div class="sl-rule">${r.rule}</div>
+              <div class="sl-detail">${r.detail}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.08em;margin-bottom:12px">STOP-LOSS RULES</div>
+        <div class="sl-list">
+          ${S.entryExitRules.stopLossRules.map(r=>`
+            <div class="sl-row">
+              <div class="sl-rule">${r.rule}</div>
+              <div class="sl-detail">${r.detail}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- ── SECTION 6: PRICE LEVELS ── -->
+      <div class="section" id="price-levels">
+        <div class="sec-header">
+          <span class="sec-num">06</span>
+          <div>
+            <div class="sec-title">Price Level Calculation</div>
+            <div class="sec-sub">How entry, target, stoploss, and breakeven trigger are computed for each trade.</div>
+          </div>
+        </div>
+
+        <div class="formula-box" style="margin-bottom:20px">
+          <div class="formula-title">Level Formulas</div>
+          <div class="formula-eq" style="font-size:13px">
+            <span>ATR = Price × Sector_ATR%</span><br>
+            <span>Entry (BUY)  = LTP × 1.001</span> &nbsp;&nbsp; <span>Entry (SELL) = LTP × 0.999</span><br>
+            <span>Target = Entry ± (ATR × 2.0)</span> &nbsp;&nbsp; <span style="color:var(--a)">SL = Entry ∓ (ATR × sl_mult)</span><br>
+            <span style="color:#a78bfa">Breakeven Trigger = Entry ± (ATR × 1.0)</span><br>
+            <span style="font-size:11px;color:var(--t3)">sl_mult = 1.0 if volume > 1.5x avg &nbsp;|&nbsp; 1.4 if volume ≤ 1.5x avg (noise protection)</span>
+          </div>
+        </div>
+
+        <div style="font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.08em;margin-bottom:12px">SECTOR ATR CALIBRATION</div>
+        <div class="atr-grid">
+          ${S.priceLevelMethod.sectorATRs.map(s=>`
+            <div class="atr-card">
+              <div class="atr-sec">${s.sector}</div>
+              <div class="atr-val">${s.atrPct}</div>
+              <div class="atr-note">${s.note}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- ── SECTION 7: CHANGELOG ── -->
+      <div class="section" id="changelog">
+        <div class="sec-header">
+          <span class="sec-num">07</span>
+          <div>
+            <div class="sec-title">Strategy Changelog</div>
+            <div class="sec-sub">Auto-generated from addedOn dates in strategies.js. Updates when factors/rules are added or removed.</div>
+          </div>
+        </div>
+
+        <div class="changelog">
+          <div class="cl-title">ALL CHANGES (newest first)</div>
+          ${allDated.length ? allDated.map(e=>`
+            <div class="cl-item">
+              <div class="cl-date">${e.date}</div>
+              <div class="cl-text">
+                <span class="tag" style="background:var(--b2);color:var(--b);border:1px solid rgba(77,159,255,.2)">${e.type}</span>
+                <strong>${e.name}</strong>
+                <span style="color:var(--t3)"> — ${e.active ? 'Active' : 'Disabled'}</span>
+              </div>
+            </div>
+          `).join('') : '<div class="empty">No dated entries found.</div>'}
+        </div>
+      </div>
+
+    </div><!-- end main -->
+  `;
+}
+
+function toggleFactor(bodyId, chevId) {
+  const body = document.getElementById(bodyId);
+  const chev = document.getElementById(chevId);
+  const isOpen = body.classList.toggle('open');
+  chev.textContent = isOpen ? '▲' : '▼';
+}
+</script>
+</body>
+</html>
