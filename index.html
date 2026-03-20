@@ -363,6 +363,7 @@ td{padding:10px 12px;vertical-align:top}
           <th>Volume</th>
           <th>PCR</th>
           <th>Signal</th>
+          <th>Bulk Deal</th>
           <th style="min-width:168px">Price Levels (1:2 R:R)</th>
           <th style="min-width:130px">Success %</th>
           <th style="min-width:210px">Reinforce Tips</th>
@@ -546,12 +547,15 @@ async function doRefresh() {
 function applyData(data) {
   stockData = data.stocks || [];
   indices   = data.indices || [];
+  window._marketPCR = data.market_pcr || '—';
   const badge = document.getElementById('src-badge');
   document.getElementById('ts').textContent = data.timestamp || '—';
-  if (data.source === 'fyers_live') {
-    badge.textContent = '● LIVE'; badge.className = 'badge badge-live';
+  if (data.source === 'nse_live') {
+    const lc = data.live_count || 0, sc2 = data.sim_count || 0;
+    badge.textContent = `● NSE LIVE (${lc} live)`;
+    badge.className = 'badge badge-live';
   } else {
-    badge.textContent = 'SIM';   badge.className = 'badge badge-sim';
+    badge.textContent = 'SIM'; badge.className = 'badge badge-sim';
   }
   if (data.entry_timing) {
     document.getElementById('timing-text').textContent = data.entry_timing;
@@ -813,8 +817,11 @@ function render(){
   const ml=nc>.5?'BULLISH':nc<-.5?'BEARISH':'SIDEWAYS';
   const avg=stockData.length?Math.round(stockData.reduce((a,x)=>a+x.score,0)/stockData.length):0;
   const cleans=stockData.filter(d=>d.is_clean).length;
+  const mpcr = window._marketPCR || '—';
+  const pcrColor = mpcr < 0.8 ? 'var(--g)' : mpcr > 1.2 ? 'var(--r)' : 'var(--a)';
+  const pcrLabel = mpcr < 0.8 ? 'Bullish' : mpcr > 1.2 ? 'Bearish' : 'Neutral';
   document.getElementById('mood').innerHTML=
-    `<span style="color:${mc}">${ml}</span> &nbsp;·&nbsp; avg <span style="color:var(--g)">${avg}%</span> &nbsp;·&nbsp; <span style="color:var(--g)">${cleans}</span>/<span>${stockData.length}</span> clean`;
+    `<span style="color:${mc}">${ml}</span> &nbsp;·&nbsp; PCR <span style="color:${pcrColor}">${mpcr} (${pcrLabel})</span> &nbsp;·&nbsp; avg <span style="color:var(--g)">${avg}%</span> &nbsp;·&nbsp; <span style="color:var(--g)">${cleans}</span>/${stockData.length} clean`;
   document.getElementById('ct').textContent=`${data.length} stocks`;
 
   if(!data.length){
@@ -853,10 +860,17 @@ function render(){
       ?d.tips.map(t=>`<div class="tiprow"><span class="tipdot">▸</span><span>${t.t||t.text} <span class="tipboost">${t.b||t.boost||''}</span></span></div>`).join('')
       :`<div class="allgood"><span>✓</span><span>All factors aligned</span></div>`;
 
+    const bulkHtml = d.bulk_deal
+      ? `<span class="sig ${d.bulk_deal==='BUY'?'sig-buy':'sig-sell'}" style="font-size:10px;padding:3px 7px">
+           ${d.bulk_deal==='BUY'?'▲':'▼'} ${d.bulk_deal}<br>
+           <span style="font-size:9px;opacity:.7">Bulk Deal</span>
+         </span>`
+      : `<span style="font-size:11px;color:var(--t3)">—</span>`;
+
     return`<tr class="${d.is_clean?'':'fakeout-row'}">
       <td><span class="rank ${rk}">${i+1}</span></td>
       <td>
-        <div class="sym">${d.sym}</div>
+        <div class="sym">${d.sym}${d.is_simulated?'<span style="font-size:9px;color:var(--t3);margin-left:4px">[sim]</span>':''}</div>
         <div class="sname">${d.name}</div>
       </td>
       <td><span class="sectag">${d.sector}</span></td>
@@ -870,6 +884,7 @@ function render(){
         <span class="clean-dot ${d.is_clean?'clean-yes':'clean-no'}" title="${d.is_clean?'Clean signal':'Fakeout risk'}"></span>
         ${foHtml}
       </td>
+      <td>${bulkHtml}</td>
       <td>${lvlHtml}</td>
       <td>
         <div class="succ-num" style="color:${sc2}">${d.score}%</div>
