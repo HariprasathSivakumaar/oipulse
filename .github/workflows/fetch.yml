@@ -1,0 +1,40 @@
+name: Fetch & Encrypt Market Data (9:30–3:30 IST)
+
+on:
+  schedule:
+    # IST = UTC+5:30. Market: 9:30–15:30 IST = 04:00–10:00 UTC
+    - cron: '0,5,10,15,20,25,30,35,40,45,50,55 4-9 * * 1-5'
+    - cron: '0 10 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - run: pip install requests
+
+      - name: Fetch, compute & encrypt
+        env:
+          FYERS_TOKEN:   ${{ secrets.FYERS_TOKEN }}
+          FYERS_APP_ID:  ${{ secrets.FYERS_APP_ID }}
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+        run: python scripts/fetch_signals.py
+
+      - name: Commit encrypted data
+        run: |
+          git config user.name  "OIPulse Bot"
+          git config user.email "bot@oipulse.local"
+          git add data/signals.enc.json
+          git diff --staged --quiet || git commit -m "data: $(date -u '+%H:%M UTC')"
+          git push
